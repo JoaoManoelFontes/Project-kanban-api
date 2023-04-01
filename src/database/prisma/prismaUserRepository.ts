@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { UserRepository } from "../../app/repositories/userRepository";
 import { User } from "../../app/types/userTypes";
-import { v4 as uuidv4 } from "uuid";
 
 const prisma = new PrismaClient();
 export class PrismaUserRepository extends UserRepository {
@@ -16,5 +15,15 @@ export class PrismaUserRepository extends UserRepository {
     });
 
     return createUser;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    return user;
   }
 }

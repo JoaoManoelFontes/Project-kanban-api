@@ -1,10 +1,33 @@
 import { Request, Response } from "express";
 import { PrismaUserRepository } from "../../database/prisma/prismaUserRepository";
 import { createUser } from "../../app/use-cases/user/createUser";
+import { userLogin } from "../../app/use-cases/user/userLogin";
 
-export async function create(req: Request, res: Response) {
-  const repository = new PrismaUserRepository();
-  const user = await createUser(repository, req.body);
+const repository = new PrismaUserRepository();
+
+export async function create({ body }: Request, res: Response) {
+  const user = await createUser(repository, body);
+
+  if (Array.isArray(user)) {
+    return res.status(400).json(user);
+  }
+
+  if (user instanceof Error) {
+    return res.status(400).json({ error: user.message });
+  }
 
   return res.status(201).json(user);
+}
+
+export async function login({ body }: Request, res: Response) {
+  const user = await userLogin(repository, body);
+
+  if (Array.isArray(user)) {
+    return res.status(400).json(user);
+  }
+
+  if (user instanceof Error) {
+    return res.status(400).json({ error: user.message });
+  }
+  return res.status(200).json(user);
 }

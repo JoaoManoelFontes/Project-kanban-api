@@ -26,4 +26,22 @@ export class PrismaUserRepository extends UserRepository {
 
     return user;
   }
+
+  async delete(id: string): Promise<void | Error> {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (user) {
+      await prisma.user.delete({
+        where: {
+          id,
+        },
+      });
+    } else {
+      return new Error("User not found");
+    }
+  }
 }

@@ -11,7 +11,7 @@ export async function createUser(
   if (result.success) {
     const user = await userRepository.findByEmail(result.data.email);
     if (user) {
-      return new Error("User already exists");
+      return new Error("Email already registered");
     }
     return await userRepository.create(result.data);
   } else {

@@ -12,4 +12,13 @@ export class InMemoryUserRepository implements UserRepository {
   async findByEmail(email: string): Promise<User | null> {
     return this.users.find((user) => user.email === email) || null;
   }
+
+  async delete(id: string): Promise<void | Error> {
+    const user = this.users.find((user) => user.id === id);
+    if (user) {
+      this.users.splice(this.users.indexOf(user), 1);
+    } else {
+      return new Error("User not found");
+    }
+  }
 }

@@ -3,9 +3,9 @@ import { InMemoryUserRepository } from "../../../database/inMemory/inMemoryUserR
 import { userLogin } from "./userLogin";
 import { createUserFactory } from "../../factories/createUserFactory";
 
-const repository = new InMemoryUserRepository();
-
 test("userLogin", async () => {
+  const repository = new InMemoryUserRepository();
+
   const { email, password } = await repository.create(createUserFactory());
 
   const result = await userLogin(repository, { email, password });
@@ -14,10 +14,12 @@ test("userLogin", async () => {
 });
 
 test("userLogin with invalid email", async () => {
+  const repository = new InMemoryUserRepository();
+
   const { password } = await repository.create(createUserFactory());
 
   const result = await userLogin(repository, {
-    email: "emailNotCadastred@gmail.com",
+    email: "emailNotRegistered@gmail.com",
     password,
   });
   console.log(result);
@@ -29,6 +31,8 @@ test("userLogin with invalid email", async () => {
 });
 
 test("userLogin with invalid password", async () => {
+  const repository = new InMemoryUserRepository();
+
   const { email } = await repository.create(createUserFactory());
 
   const result = await userLogin(repository, {

@@ -44,4 +44,29 @@ export class PrismaUserRepository extends UserRepository {
       return new Error("User not found");
     }
   }
+
+  async update(id: string, user: Partial<User>): Promise<User> {
+    const updatedUser = await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        name: user.name,
+        email: user.email,
+        password: user.password,
+      },
+    });
+
+    return updatedUser;
+  }
+
+  async findById(id: string): Promise<User | null> {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return user;
+  }
 }

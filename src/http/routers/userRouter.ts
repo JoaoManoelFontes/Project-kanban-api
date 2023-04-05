@@ -5,6 +5,6 @@ const userRouter = express.Router();
 userRouter.post("/", create);
 userRouter.post("/login", login);
 userRouter.delete("/", exclude);
-userRouter.put("/", update);
+userRouter.put("/:id", update);
 
 export { userRouter };

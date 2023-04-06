@@ -34,8 +34,8 @@ export async function login({ body }: Request, res: Response) {
   return res.status(200).json(user);
 }
 
-export async function exclude({ body }: Request, res: Response) {
-  const user = await deleteUser(repository, body.id);
+export async function exclude({ params }: Request, res: Response) {
+  const user = await deleteUser(repository, params.id);
 
   if (user instanceof Error) {
     return res.status(400).json({ error: user.message });
@@ -53,6 +53,20 @@ export async function update(req: Request, res: Response) {
 
   if (user instanceof Error) {
     return res.status(400).json({ error: user.message });
+  }
+
+  if (Array.isArray(user)) {
+    return res.status(400).json(user);
+  }
+
+  return res.status(200).json(user);
+}
+
+export async function show(req: Request, res: Response) {
+  const user = await repository.findById(req.params.id);
+
+  if (user instanceof Error) {
+    return res.status(404).json({ error: user.message });
   }
 
   return res.status(200).json(user);

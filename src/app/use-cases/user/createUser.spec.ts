@@ -39,6 +39,6 @@ test("createUser with existent email", async () => {
   expect(result).toBeInstanceOf(Error);
 
   if (result instanceof Error) {
-    expect(result.message).toEqual("User already exists");
+    expect(result.message).toEqual("Email already registered");
   }
 });

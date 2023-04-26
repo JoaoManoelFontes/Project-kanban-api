@@ -65,8 +65,8 @@ export async function update(req: Request, res: Response) {
 export async function show(req: Request, res: Response) {
   const user = await repository.findById(req.params.id);
 
-  if (user instanceof Error) {
-    return res.status(404).json({ error: user.message });
+  if (user === null) {
+    return res.status(404).json({ error: "User not found" });
   }
 
   return res.status(200).json(user);

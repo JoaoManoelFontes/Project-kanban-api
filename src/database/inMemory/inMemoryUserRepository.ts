@@ -28,7 +28,9 @@ export class InMemoryUserRepository implements UserRepository {
     return this.users[index];
   }
 
-  async findById(id: string): Promise<User | null> {
-    return this.users.find((user) => user.id === id) || null;
+  async findById(id: string): Promise<User | Error> {
+    return (
+      this.users.find((user) => user.id === id) || new Error("User not found")
+    );
   }
 }

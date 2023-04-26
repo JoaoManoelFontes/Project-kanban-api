@@ -1,22 +1,24 @@
 import { ZodIssue } from "zod";
 import { UserRepository } from "../../repositories/userRepository";
-import { User, UserSchema } from "../../types/userTypes";
+import { UpdateUser, UpdateUserSchema } from "../../types/userTypes";
 import bycript from "bcrypt";
 
 type props = {
   repository: UserRepository;
   id: string;
-  user: Partial<User>;
+  user: UpdateUser;
 };
 
 export async function updateUser({
   repository,
   id,
   user,
-}: props): Promise<User | Error | ZodIssue[]> {
+}: props): Promise<UpdateUser | Error | ZodIssue[]> {
   const userExists = await repository.findById(id);
 
-  if (userExists) {
+  if (userExists instanceof Error) {
+    return new Error("User not found");
+  } else {
     if (user.password) {
       if (bycript.compareSync(user.password, userExists.password)) {
         return new Error("Password must be different");
@@ -25,16 +27,13 @@ export async function updateUser({
       user.password = bycript.hashSync(user.password, 10);
     }
 
-    const updatedUser = await repository.update(id, user);
-
-    const result = UserSchema.safeParse(updatedUser);
+    const result = UpdateUserSchema.safeParse(user);
 
     if (result.success) {
-      return result.data;
+      await repository.update(id, user);
+      return await repository.findById(id);
     }
 
     return result.error.issues;
-  } else {
-    return new Error("User not found");
   }
 }

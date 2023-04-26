@@ -60,13 +60,13 @@ export class PrismaUserRepository extends UserRepository {
     return updatedUser;
   }
 
-  async findById(id: string): Promise<User | null> {
+  async findById(id: string): Promise<User | Error> {
     const user = await prisma.user.findUnique({
       where: {
         id,
       },
     });
-
+    if (!user) return new Error("User not found");
     return user;
   }
 }

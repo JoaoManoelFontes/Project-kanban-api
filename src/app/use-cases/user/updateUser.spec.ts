@@ -2,7 +2,6 @@ import { expect, test } from "vitest";
 import { InMemoryUserRepository } from "../../../database/inMemory/inMemoryUserRepository";
 import { updateUser } from "./updateUser";
 import { createUserFactory } from "../../factories/createUserFactory";
-import bycrypt from "bcrypt";
 
 test("Should update user", async () => {
   const repository = new InMemoryUserRepository();
@@ -34,6 +33,7 @@ test("Should not update user with invalid email", async () => {
       email: "invalid email",
     },
   });
+  console.log(updatedUser);
 
   expect(updatedUser).toMatchObject([
     {
@@ -43,6 +43,8 @@ test("Should not update user with invalid email", async () => {
       path: ["email"],
     },
   ]);
+
+  expect(repository.users[0].email != "invalid email");
 });
 
 test("Should not update user with inexistent id", async () => {

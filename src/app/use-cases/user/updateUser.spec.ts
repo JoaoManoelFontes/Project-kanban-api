@@ -1,12 +1,17 @@
 import { expect, test } from "vitest";
 import { InMemoryUserRepository } from "../../../database/inMemory/inMemoryUserRepository";
 import { updateUser } from "./updateUser";
+import { createUser } from "./createUser";
 import { createUserFactory } from "../../factories/createUserFactory";
 
 test("Should update user", async () => {
   const repository = new InMemoryUserRepository();
 
-  const user = await repository.create(createUserFactory());
+  const user = await createUser(repository, createUserFactory());
+
+  if (user instanceof Error || Array.isArray(user)) {
+    throw new Error("Error creating user");
+  }
 
   const updatedUser = await updateUser({
     repository,
@@ -24,7 +29,11 @@ test("Should update user", async () => {
 test("Should not update user with invalid email", async () => {
   const repository = new InMemoryUserRepository();
 
-  const user = await repository.create(createUserFactory());
+  const user = await createUser(repository, createUserFactory());
+
+  if (user instanceof Error || Array.isArray(user)) {
+    throw new Error("Error creating user");
+  }
 
   const updatedUser = await updateUser({
     repository,
@@ -33,7 +42,6 @@ test("Should not update user with invalid email", async () => {
       email: "invalid email",
     },
   });
-  console.log(updatedUser);
 
   expect(updatedUser).toMatchObject([
     {
@@ -62,5 +70,26 @@ test("Should not update user with inexistent id", async () => {
 
   if (updatedUser instanceof Error) {
     expect(updatedUser.message).toEqual("User not found");
+  }
+});
+
+test("Should not update user with the same password", async () => {
+  const repository = new InMemoryUserRepository();
+  const user = await createUser(repository, createUserFactory());
+
+  if (user instanceof Error || Array.isArray(user)) {
+    throw new Error("Error creating user");
+  }
+
+  const updatedUser = await updateUser({
+    repository,
+    id: user.id,
+    user: {
+      password: "password",
+    },
+  });
+  expect(updatedUser).toBeInstanceOf(Error);
+  if (updatedUser instanceof Error) {
+    expect(updatedUser.message).toEqual("Password must be different");
   }
 });

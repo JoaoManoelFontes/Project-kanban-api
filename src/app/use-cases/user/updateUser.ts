@@ -23,14 +23,12 @@ export async function updateUser({
       if (bycript.compareSync(user.password, userExists.password)) {
         return new Error("Password must be different");
       }
-
-      user.password = bycript.hashSync(user.password, 10);
     }
 
     const result = UpdateUserSchema.safeParse(user);
 
     if (result.success) {
-      await repository.update(id, user);
+      await repository.update(id, result.data);
       return await repository.findById(id);
     }
 

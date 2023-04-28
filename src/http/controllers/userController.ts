@@ -4,6 +4,7 @@ import { createUser } from "../../app/use-cases/user/createUser";
 import { userLogin } from "../../app/use-cases/user/userLogin";
 import { deleteUser } from "../../app/use-cases/user/deleteUser";
 import { updateUser } from "../../app/use-cases/user/updateUser";
+import { findUser } from "../../app/use-cases/user/findUser";
 
 const repository = new PrismaUserRepository();
 
@@ -63,10 +64,10 @@ export async function update(req: Request, res: Response) {
 }
 
 export async function show(req: Request, res: Response) {
-  const user = await repository.findById(req.params.id);
+  const user = await findUser(repository, req.params.id);
 
-  if (user === null) {
-    return res.status(404).json({ error: "User not found" });
+  if (user instanceof Error) {
+    return res.status(404).json({ error: user.message });
   }
 
   return res.status(200).json(user);

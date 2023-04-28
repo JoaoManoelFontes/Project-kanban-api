@@ -2,21 +2,34 @@ import { expect, test } from "vitest";
 import { InMemoryUserRepository } from "../../../database/inMemory/inMemoryUserRepository";
 import { userLogin } from "./userLogin";
 import { createUserFactory } from "../../factories/createUserFactory";
+import { createUser } from "./createUser";
 
 test("userLogin", async () => {
   const repository = new InMemoryUserRepository();
 
-  const { email, password } = await repository.create(createUserFactory());
+  const { email, password } = createUserFactory();
+
+  const user = await createUser(repository, createUserFactory());
+
+  if (user instanceof Error || Array.isArray(user)) {
+    throw new Error("Error creating user");
+  }
 
   const result = await userLogin(repository, { email, password });
 
-  expect(result).toBeTruthy();
+  expect(result).toEqual(repository.users[0]);
 });
 
 test("userLogin with invalid email", async () => {
   const repository = new InMemoryUserRepository();
 
-  const { password } = await repository.create(createUserFactory());
+  const { password } = createUserFactory();
+
+  const user = await createUser(repository, createUserFactory());
+
+  if (user instanceof Error || Array.isArray(user)) {
+    throw new Error("Error creating user");
+  }
 
   const result = await userLogin(repository, {
     email: "emailNotRegistered@gmail.com",
@@ -33,7 +46,13 @@ test("userLogin with invalid email", async () => {
 test("userLogin with invalid password", async () => {
   const repository = new InMemoryUserRepository();
 
-  const { email } = await repository.create(createUserFactory());
+  const { email } = createUserFactory();
+
+  const user = await createUser(repository, createUserFactory());
+
+  if (user instanceof Error || Array.isArray(user)) {
+    throw new Error("Error creating user");
+  }
 
   const result = await userLogin(repository, {
     email,

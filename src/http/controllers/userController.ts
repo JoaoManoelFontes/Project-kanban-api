@@ -63,7 +63,7 @@ export async function update(req: Request, res: Response) {
   return res.status(200).json(user);
 }
 
-export async function show(req: Request, res: Response) {
+export async function detail(req: Request, res: Response) {
   const user = await findUser(repository, req.params.id);
 
   if (user instanceof Error) {

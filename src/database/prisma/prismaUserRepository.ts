@@ -5,7 +5,7 @@ import { User } from "../../app/types/userTypes";
 const prisma = new PrismaClient();
 export class PrismaUserRepository extends UserRepository {
   async create(user: User): Promise<User> {
-    const createUser = await prisma.user.create({
+    return await prisma.user.create({
       data: {
         id: user.id,
         name: user.name,
@@ -13,8 +13,6 @@ export class PrismaUserRepository extends UserRepository {
         password: user.password,
       },
     });
-
-    return createUser;
   }
 
   async findByEmail(email: string): Promise<User | null> {
@@ -50,11 +48,7 @@ export class PrismaUserRepository extends UserRepository {
       where: {
         id,
       },
-      data: {
-        name: user.name,
-        email: user.email,
-        password: user.password,
-      },
+      data: user,
     });
 
     return updatedUser;

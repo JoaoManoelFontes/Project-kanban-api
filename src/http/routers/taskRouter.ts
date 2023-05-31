@@ -1,9 +1,7 @@
 import express from "express";
-
+import { create } from "../controllers/taskController";
 const taskRouter = express.Router();
 
-taskRouter.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+taskRouter.post("/", create);
 
 export { taskRouter };

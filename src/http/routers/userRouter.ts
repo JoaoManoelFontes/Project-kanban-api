@@ -6,12 +6,14 @@ import {
   update,
   detail,
 } from "../controllers/userController";
+import { authMiddleware } from "../middlewares/auth";
+
 const userRouter = express.Router();
 
 userRouter.post("/", create);
 userRouter.post("/login", login);
-userRouter.delete("/:id", exclude);
-userRouter.put("/:id", update);
-userRouter.get("/:id", detail);
+userRouter.delete("/", authMiddleware,  exclude);
+userRouter.put("/", authMiddleware, update);
+userRouter.get("/", authMiddleware, detail);
 
 export { userRouter };

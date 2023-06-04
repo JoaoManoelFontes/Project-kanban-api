@@ -16,8 +16,12 @@ test("userLogin", async () => {
   }
 
   const result = await userLogin(repository, { email, password });
+  if( result instanceof Error || Array.isArray(result)) {
+    throw new Error("Error creating user");
+  }
 
-  expect(result).toEqual(repository.users[0]);
+  
+  expect(result).toStrictEqual(expect.any(String));
 });
 
 test("userLogin with invalid email", async () => {
@@ -35,7 +39,6 @@ test("userLogin with invalid email", async () => {
     email: "emailNotRegistered@gmail.com",
     password,
   });
-  console.log(result);
 
   expect(result).toBeInstanceOf(Error);
   if (result instanceof Error) {

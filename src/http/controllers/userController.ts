@@ -23,20 +23,20 @@ export async function create({ body }: Request, res: Response) {
 }
 
 export async function login({ body }: Request, res: Response) {
-  const user = await userLogin(repository, body);
+  const token = await userLogin(repository, body);
 
-  if (Array.isArray(user)) {
-    return res.status(400).json(user);
+  if (Array.isArray(token)) {
+    return res.status(400).json(token);
   }
 
-  if (user instanceof Error) {
-    return res.status(400).json({ error: user.message });
+  if (token instanceof Error) {
+    return res.status(400).json({ error: token.message });
   }
-  return res.status(200).json(user);
+  return res.status(200).json(token);
 }
 
-export async function exclude({ params }: Request, res: Response) {
-  const user = await deleteUser(repository, params.id);
+export async function exclude(req: Request, res: Response) {
+  const user = await deleteUser(repository, req.sub);
 
   if (user instanceof Error) {
     return res.status(400).json({ error: user.message });
@@ -48,7 +48,7 @@ export async function exclude({ params }: Request, res: Response) {
 export async function update(req: Request, res: Response) {
   const user = await updateUser({
     repository,
-    id: req.params.id,
+    id: req.sub,
     user: req.body,
   });
 
@@ -64,8 +64,9 @@ export async function update(req: Request, res: Response) {
 }
 
 export async function detail(req: Request, res: Response) {
-  const user = await findUser(repository, req.params.id);
-
+  const user = await findUser(repository, req.sub);
+  
+  
   if (user instanceof Error) {
     return res.status(404).json({ error: user.message });
   }

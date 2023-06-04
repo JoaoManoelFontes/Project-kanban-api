@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 export class PrismaTaskRepository extends TaskRepository {
   async create(task: Task): Promise<Task> {
-    return await prisma.task.create({
+     return await prisma.task.create({
       data: task,
     });
   }
@@ -33,5 +33,14 @@ export class PrismaTaskRepository extends TaskRepository {
 
     if (!task) return new Error("Task not found");
     return task;
+  }
+
+  async findAllByUserId(userId: string): Promise<Error | Task[]> {
+    const tasks =  await prisma.task.findMany({
+      where: { userId },
+    });
+    if (!tasks) return new Error("Tasks not found");
+
+    return tasks;
   }
 }

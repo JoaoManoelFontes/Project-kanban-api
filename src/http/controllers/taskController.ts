@@ -11,3 +11,11 @@ export async function create({ body }: Request, res: Response) {
   }
   return res.status(201).json(result);
 }
+
+export async function findAllByUserId({ params }: Request, res: Response) {
+  const result = await taskRepository.findAllByUserId(params.userId);
+  if (result instanceof Error) {
+    return res.status(400).json({ message: result.message });
+  }
+  return res.status(200).json(result);
+}

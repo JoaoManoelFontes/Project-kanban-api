@@ -5,7 +5,7 @@ import { User } from "../../types/userTypes"
 import { sign } from "jsonwebtoken"
 import bcrypt from "bcrypt"
 
-export async function userLogin(
+export async function userAuthentication(
     userRepository: UserRepository,
     params: Login
 ): Promise<{ user: User; token: string } | ZodIssue[] | Error> {
@@ -20,13 +20,9 @@ export async function userLogin(
             )
 
             if (passwordMatch) {
-                const token = sign(
-                    { id: user.id },
-                    process.env.JWT_SECRET_KEY as string,
-                    {
-                        expiresIn: "1d",
-                    }
-                )
+                const token = sign({ id: user.id }, "secret", {
+                    expiresIn: "1d",
+                })
                 return { user, token }
             } else {
                 return new Error("Password doesn't match")

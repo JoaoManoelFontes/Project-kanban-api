@@ -1,8 +1,9 @@
-import express from "express";
-import { create, findAllByUserId } from "../controllers/taskController";
-const taskRouter = express.Router();
+import express from "express"
+import { create, findAllByUserId } from "../controllers/taskController"
 
-taskRouter.post("/", create);
-taskRouter.get("/:userId", findAllByUserId);
+const taskRouter = express.Router()
 
-export { taskRouter };
+taskRouter.post("/", create)
+taskRouter.get("/", findAllByUserId)
+
+export { taskRouter }

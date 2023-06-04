@@ -1,19 +1,19 @@
-import express from "express";
+import express from "express"
 import {
-  create,
-  exclude,
-  login,
-  update,
-  detail,
-} from "../controllers/userController";
-import { authMiddleware } from "../middlewares/auth";
+    create,
+    exclude,
+    auth,
+    update,
+    detail,
+} from "../controllers/userController"
+import { authMiddleware } from "../middlewares/auth"
 
-const userRouter = express.Router();
+const userRouter = express.Router()
 
-userRouter.post("/", create);
-userRouter.post("/login", login);
-userRouter.delete("/", authMiddleware,  exclude);
-userRouter.put("/", authMiddleware, update);
-userRouter.get("/", authMiddleware, detail);
+userRouter.post("/", create)
+userRouter.post("/auth", auth)
+userRouter.delete("/", authMiddleware, exclude)
+userRouter.put("/", authMiddleware, update)
+userRouter.get("/", authMiddleware, detail)
 
-export { userRouter };
+export { userRouter }

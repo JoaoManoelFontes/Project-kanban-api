@@ -1,4 +1,4 @@
-import { ZodIssue, string } from "zod"
+import { ZodIssue } from "zod"
 import { Login, LoginSchema } from "../../types/loginTypes"
 import { UserRepository } from "../../repositories/userRepository"
 import { User } from "../../types/userTypes"

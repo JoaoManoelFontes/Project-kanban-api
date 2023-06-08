@@ -5,14 +5,15 @@ import { userAuthentication } from "../../app/use-cases/user/userAuthentication"
 import { deleteUser } from "../../app/use-cases/user/deleteUser"
 import { updateUser } from "../../app/use-cases/user/updateUser"
 import { findUser } from "../../app/use-cases/user/findUser"
+import { ZodIssue } from "zod"
 
 const repository = new PrismaUserRepository()
 
 export async function create({ body }: Request, res: Response) {
     const user = await createUser(repository, body)
 
-    if (Array.isArray(user)) {
-        return res.status(400).json(user)
+    if (user instanceof Array<ZodIssue>) {
+        return res.status(400).json({ message: "Invalid data", issues: user })
     }
 
     if (user instanceof Error) {
@@ -25,8 +26,8 @@ export async function create({ body }: Request, res: Response) {
 export async function auth({ body }: Request, res: Response) {
     const token = await userAuthentication(repository, body)
 
-    if (Array.isArray(token)) {
-        return res.status(400).json(token)
+    if (token instanceof Array<ZodIssue>) {
+        return res.status(400).json({ message: "Invalid data", issues: token })
     }
 
     if (token instanceof Error) {
@@ -56,8 +57,8 @@ export async function update(req: Request, res: Response) {
         return res.status(400).json({ error: user.message })
     }
 
-    if (Array.isArray(user)) {
-        return res.status(400).json(user)
+    if (user instanceof Array<ZodIssue>) {
+        return res.status(400).json({ message: "Invalid data", issues: user })
     }
 
     return res.status(200).json(user)

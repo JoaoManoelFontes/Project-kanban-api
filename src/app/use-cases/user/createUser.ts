@@ -1,20 +1,20 @@
-import { UserSchema, User } from "../../types/userTypes";
-import { UserRepository } from "../../repositories/userRepository";
-import { ZodIssue } from "zod";
+import { UserSchema, User } from "../../types/userTypes"
+import { UserRepository } from "../../repositories/userRepository"
+import { ZodIssue } from "zod"
 
 export async function createUser(
-  userRepository: UserRepository,
-  user: User
+    userRepository: UserRepository,
+    user: User
 ): Promise<User | ZodIssue[] | Error> {
-  const result = UserSchema.safeParse(user);
+    const result = UserSchema.safeParse(user)
 
-  if (result.success) {
-    const user = await userRepository.findByEmail(result.data.email);
-    if (user) {
-      return new Error("Email already registered");
+    if (result.success) {
+        const user = await userRepository.findByEmail(result.data.email)
+        if (user) {
+            return new Error("Email already registered")
+        }
+        return await userRepository.create(result.data)
+    } else {
+        return result.error.issues
     }
-    return await userRepository.create(result.data);
-  } else {
-    return result.error.issues;
-  }
 }

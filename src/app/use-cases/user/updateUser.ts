@@ -1,37 +1,31 @@
-import { ZodIssue } from "zod"
 import { UserRepository } from "../../repositories/userRepository"
 import { UpdateUser, UpdateUserSchema } from "../../types/userTypes"
-import bycript from "bcrypt"
+import bcrypt from "bcrypt"
 
-type props = {
+interface updateUserResponse {
     repository: UserRepository
-    id: string
     user: UpdateUser
+    id: string
 }
 
 export async function updateUser({
     repository,
-    id,
     user,
-}: props): Promise<UpdateUser | Error | ZodIssue[]> {
+    id,
+}: updateUserResponse): Promise<UpdateUser> {
     const userExists = await repository.findById(id)
 
     if (userExists instanceof Error) {
-        return new Error("User not found")
+        throw new Error("User not found")
     } else {
         if (user.password) {
-            if (bycript.compareSync(user.password, userExists.password)) {
-                return new Error("Password must be different")
+            if (await bcrypt.compare(user.password, userExists.password)) {
+                throw new Error("Password must be different")
             }
+            user.password = bcrypt.hashSync(user.password, 10)
         }
 
-        const result = UpdateUserSchema.safeParse(user)
-
-        if (result.success) {
-            await repository.update(id, result.data)
-            return await repository.findById(id)
-        }
-
-        return result.error.issues
+        await repository.update(id, user)
+        return await repository.findById(id)
     }
 }

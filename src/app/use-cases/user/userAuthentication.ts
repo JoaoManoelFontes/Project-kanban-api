@@ -1,36 +1,41 @@
-import { ZodIssue } from "zod"
 import { Login, LoginSchema } from "../../types/loginTypes"
 import { UserRepository } from "../../repositories/userRepository"
 import { User } from "../../types/userTypes"
 import { sign } from "jsonwebtoken"
 import bcrypt from "bcrypt"
 
-export async function userAuthentication(
-    userRepository: UserRepository,
-    params: Login
-): Promise<{ user: User; token: string } | ZodIssue[] | Error> {
-    const result = LoginSchema.safeParse(params)
-    if (result.success) {
-        const user = await userRepository.findByEmail(result.data.email)
+interface authRequest {
+    userRepository: UserRepository
+    user: Login
+}
 
-        if (user) {
-            const passwordMatch = await bcrypt.compare(
-                result.data.password,
-                user.password
-            )
+interface authResponse {
+    user: User
+    token: string
+}
 
-            if (passwordMatch) {
-                const token = sign({ id: user.id }, "secret", {
-                    expiresIn: "1d",
-                })
-                return { user, token }
-            } else {
-                return new Error("Password doesn't match")
-            }
+export async function userAuthentication({
+    userRepository,
+    user,
+}: authRequest): Promise<authResponse> {
+    const userExists = await userRepository.findByEmail(user.email)
+
+    if (userExists) {
+        const passwordMatch = await bcrypt.compare(
+            user.password,
+            userExists.password
+        )
+
+        if (passwordMatch) {
+            const token = sign({ id: userExists.id }, "secret", {
+                expiresIn: "1d",
+            })
+
+            return { user: userExists, token }
         } else {
-            return new Error("User not found")
+            throw new Error("Password doesn't match")
         }
     } else {
-        return result.error.issues
+        throw new Error("User not found")
     }
 }

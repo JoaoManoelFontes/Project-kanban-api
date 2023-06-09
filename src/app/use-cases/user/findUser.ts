@@ -1,10 +1,10 @@
-import { UserRepository } from "../../repositories/userRepository";
-import { User } from "../../types/userTypes";
+import { UserRepository } from "../../repositories/userRepository"
+import { User } from "../../types/userTypes"
 
 export async function findUser(
-  repository: UserRepository,
-  id: string
+    repository: UserRepository,
+    id: string
 ): Promise<User | Error> {
-  const user = await repository.findById(id);
-  return user;
+    const user = await repository.findById(id)
+    return user
 }

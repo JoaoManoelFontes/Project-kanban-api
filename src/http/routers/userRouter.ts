@@ -7,6 +7,7 @@ import {
     detail,
 } from "../controllers/userController"
 import { authMiddleware } from "../middlewares/auth"
+import { z } from "zod"
 
 const userRouter = express.Router()
 

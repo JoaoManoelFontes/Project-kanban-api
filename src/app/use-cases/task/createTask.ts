@@ -1,15 +1,18 @@
 import { TaskRepository } from "../../repositories/taskRepository"
 import { Task } from "../../types/taskTypes"
-import { TaskSchema } from "../../types/taskTypes"
-import { ZodIssue } from "zod"
 
-export async function createTask(
-    taskRepository: TaskRepository,
+interface createTaskRequest {
+    taskRepository: TaskRepository
     task: Task
-): Promise<Task | ZodIssue[]> {
-    const result = TaskSchema.safeParse(task)
-    if (!result.success) {
-        return result.error.issues
-    }
-    return await taskRepository.create(result.data)
+}
+
+interface createTaskResponse {
+    task: Task
+}
+
+export async function createTask({
+    taskRepository,
+    task,
+}: createTaskRequest): Promise<createTaskResponse> {
+    return { task: await taskRepository.create(task) }
 }

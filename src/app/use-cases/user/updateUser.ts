@@ -1,5 +1,5 @@
 import { UserRepository } from "../../repositories/userRepository"
-import { UpdateUser, UpdateUserSchema } from "../../types/userTypes"
+import { UpdateUser } from "../../types/userTypes"
 import bcrypt from "bcrypt"
 
 interface updateUserResponse {

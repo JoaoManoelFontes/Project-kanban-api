@@ -16,7 +16,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
         return
     }
 
-    res.status(500).send("Something broke!")
+    res.status(500).send({ message: "something broke", error: err.message })
 })
 
 app.listen(process.env.PORT, () => console.log("Server is running!"))

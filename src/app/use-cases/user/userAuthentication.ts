@@ -1,4 +1,4 @@
-import { Login, LoginSchema } from "../../types/loginTypes"
+import { Login } from "../../types/loginTypes"
 import { UserRepository } from "../../repositories/userRepository"
 import { User } from "../../types/userTypes"
 import { sign } from "jsonwebtoken"

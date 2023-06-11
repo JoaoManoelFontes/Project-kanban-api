@@ -1,6 +1,5 @@
-import { UserSchema, User } from "../../types/userTypes"
+import { User } from "../../types/userTypes"
 import { UserRepository } from "../../repositories/userRepository"
-import { ZodIssue } from "zod"
 
 interface createUserRequest {
     userRepository: UserRepository
@@ -11,9 +10,11 @@ export async function createUser({
     userRepository,
     user,
 }: createUserRequest): Promise<User | Error> {
-    const userExists = await userRepository.findByEmail(user.email)
-    if (userExists) {
-        return new Error("Email already registered")
+    const userExist = await userRepository.findByEmail(user.email)
+
+    if (userExist) {
+        throw new Error("User already exists")
     }
+
     return await userRepository.create(user)
 }

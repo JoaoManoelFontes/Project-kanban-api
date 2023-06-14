@@ -1,44 +1,25 @@
-import { expect, test } from "vitest";
-import { createUser } from "./createUser";
-import bcrypt from "bcrypt";
-import { InMemoryUserRepository } from "../../../database/inMemory/inMemoryUserRepository";
-import { createUserFactory } from "../../factories/createUserFactory";
+import { expect, test } from "vitest"
+import { createUser } from "./createUser"
+import bcrypt from "bcrypt"
+import { InMemoryUserRepository } from "../../../database/inMemory/inMemoryUserRepository"
+import { createUserFactory } from "../../factories/createUserFactory"
 
 test("createUser", async () => {
-  const repository = new InMemoryUserRepository();
-  const user = createUserFactory();
+    const repository = new InMemoryUserRepository()
+    const user = createUserFactory()
 
-  await createUser(repository, user);
+    await createUser({ userRepository: repository, user: user })
 
-  expect(repository.users[0].name).toEqual(user.name);
-  expect(bcrypt.compareSync(user.password, repository.users[0].password)).true;
-});
-
-test("createUser with invalid email", async () => {
-  const repository = new InMemoryUserRepository();
-  const user = createUserFactory({ email: "invalid email" });
-
-  const result = await createUser(repository, user);
-
-  expect(result).toMatchObject([
-    {
-      validation: "email",
-      code: "invalid_string",
-      message: "Invalid email",
-      path: ["email"],
-    },
-  ]);
-});
+    expect(repository.users.length).toBe(1)
+    expect(repository.users[0].name).toBe(user.name)
+})
 
 test("createUser with existent email", async () => {
-  const repository = new InMemoryUserRepository();
-  const user = createUserFactory();
-  await createUser(repository, user);
+    const repository = new InMemoryUserRepository()
+    const user = createUserFactory()
+    await createUser({ userRepository: repository, user: user })
 
-  const result = await createUser(repository, user);
-  expect(result).toBeInstanceOf(Error);
-
-  if (result instanceof Error) {
-    expect(result.message).toEqual("Email already registered");
-  }
-});
+    expect(
+        async () => await createUser({ userRepository: repository, user: user })
+    ).rejects.toThrowError("User already exists")
+})

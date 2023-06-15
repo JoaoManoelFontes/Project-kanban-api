@@ -12,7 +12,10 @@ app.use("/user", userRouter)
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof ZodError) {
-        res.status(400).send(err.issues)
+        res.status(400).send({
+            message: "Validation error.",
+            issues: err.format(),
+        })
         return
     }
 

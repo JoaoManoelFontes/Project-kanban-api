@@ -1,6 +1,5 @@
 import { expect, test } from "vitest"
 import { createUser } from "./createUser"
-import bcrypt from "bcrypt"
 import { InMemoryUserRepository } from "../../../database/inMemory/inMemoryUserRepository"
 import { createUserFactory } from "../../factories/createUserFactory"
 

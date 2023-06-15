@@ -46,14 +46,8 @@ export class PrismaUserRepository extends UserRepository {
     }
 
     async update(id: string, user: Partial<User>): Promise<User> {
-        const userExists = await prisma.user.findUnique({
-            where: { id },
-        })
-
-        if (!userExists) throw new Error("User not found")
-
         const updatedUser = await prisma.user.update({
-            where: userExists,
+            where: { id },
             data: user,
         })
 

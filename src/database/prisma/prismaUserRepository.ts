@@ -46,12 +46,17 @@ export class PrismaUserRepository extends UserRepository {
     }
 
     async update(id: string, user: Partial<User>): Promise<User> {
-        const updatedUser = await prisma.user.update({
-            where: { id },
-            data: user,
-        })
+        try {
+            const updatedUser = await prisma.user.update({
+                where: { id },
+                data: user,
+            })
 
-        return updatedUser
+            return updatedUser
+        } catch (err) {
+            console.log(err)
+            throw new Error("Something went wrong in update user")
+        }
     }
 
     async findById(id: string): Promise<User> {

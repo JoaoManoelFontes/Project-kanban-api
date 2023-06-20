@@ -15,17 +15,13 @@ export async function updateUser({
 }: updateUserResponse): Promise<UpdateUser> {
     const userExists = await repository.findById(id)
 
-    if (userExists instanceof Error) {
-        throw new Error("User not found")
-    } else {
-        if (user.password) {
-            if (await bcrypt.compare(user.password, userExists.password)) {
-                throw new Error("Password must be different")
-            }
-            user.password = bcrypt.hashSync(user.password, 10)
+    if (user.password) {
+        if (await bcrypt.compare(user.password, userExists.password)) {
+            throw new Error("Password must be different")
         }
-
-        await repository.update(id, user)
-        return await repository.findById(id)
+        user.password = bcrypt.hashSync(user.password, 10)
     }
+
+    await repository.update(id, user)
+    return await repository.findById(id)
 }

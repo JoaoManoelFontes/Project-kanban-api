@@ -10,28 +10,32 @@ export class PrismaTaskRepository extends TaskRepository {
             data: task,
         })
     }
-    async update(id: string, task: Partial<Task>): Promise<Error | Task> {
-        const updatedTask = await prisma.task.update({
-            where: { id },
-            data: task,
-        })
+    async update(id: string, task: Partial<Task>): Promise<Task> {
+        try {
+            const updatedTask = await prisma.task.update({
+                where: { id },
+                data: task,
+            })
 
-        if (!updatedTask) return new Error("Task not found")
-        return updatedTask
+            return updatedTask
+        } catch (err) {
+            console.log(err)
+            throw new Error("Something went wrong in update task")
+        }
     }
-    async delete(id: string): Promise<void | Error> {
+    async delete(id: string): Promise<void> {
         const deletedTask = await prisma.task.delete({
             where: { id },
         })
 
-        if (!deletedTask) return new Error("Task not found")
+        if (!deletedTask) throw new Error("Task not found")
     }
-    async findById(id: string): Promise<Error | Task> {
+    async findById(id: string): Promise<Task> {
         const task = await prisma.task.findUnique({
             where: { id },
         })
 
-        if (!task) return new Error("Task not found")
+        if (!task) throw new Error("Task not found")
         return task
     }
 

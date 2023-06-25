@@ -16,7 +16,7 @@ test("Should find a task", async () => {
     expect(task).toEqual(createdTask)
 })
 
-test("Should throw an error if task id is invalid", async () => {
+test("Should not find task with inexistent id", async () => {
     const repository = new InMemoryTaskRepository()
 
     await repository.create(createTaskFactory())
@@ -25,7 +25,7 @@ test("Should throw an error if task id is invalid", async () => {
         async () =>
             await findTask({
                 taskRepository: repository,
-                id: "invalid",
+                id: "inexistent id",
             })
     ).rejects.toThrowError("Task not found")
 })

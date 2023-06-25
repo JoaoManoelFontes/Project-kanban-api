@@ -6,15 +6,19 @@ interface createUserRequest {
     user: User
 }
 
+interface createUserResponse {
+    createdUser: User
+}
+
 export async function createUser({
     userRepository,
     user,
-}: createUserRequest): Promise<User | Error> {
+}: createUserRequest): Promise<createUserResponse> {
     const userExist = await userRepository.findByEmail(user.email)
 
     if (userExist) {
         throw new Error("User already exists")
     }
-
-    return await userRepository.create(user)
+    const createdUser = await userRepository.create(user)
+    return { createdUser }
 }

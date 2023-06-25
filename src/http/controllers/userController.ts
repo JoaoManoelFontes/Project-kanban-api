@@ -13,11 +13,11 @@ const repository = new PrismaUserRepository()
 export async function create(req: Request, res: Response, next: NextFunction) {
     try {
         const params = UserSchema.parse(req.body)
-        const user = await createUser({
+        const { createdUser } = await createUser({
             userRepository: repository,
             user: params,
         })
-        res.status(201).send(user)
+        res.status(201).send(createdUser)
     } catch (err) {
         next(err)
     }
@@ -26,11 +26,14 @@ export async function create(req: Request, res: Response, next: NextFunction) {
 export async function auth(req: Request, res: Response, next: NextFunction) {
     try {
         const params = LoginSchema.parse(req.body)
-        const auth = await userAuthentication({
+        const { user, token } = await userAuthentication({
             userRepository: repository,
             user: params,
         })
-        res.send(auth)
+        res.send({
+            user,
+            token,
+        })
     } catch (err) {
         next(err)
     }
@@ -38,7 +41,10 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
 
 export async function exclude(req: Request, res: Response, next: NextFunction) {
     try {
-        await deleteUser(repository, req.sub)
+        await deleteUser({
+            userRepository: repository,
+            id: req.sub,
+        })
         res.status(204).send({ message: "User deleted" })
     } catch (err) {
         next(err)
@@ -48,23 +54,26 @@ export async function exclude(req: Request, res: Response, next: NextFunction) {
 export async function update(req: Request, res: Response, next: NextFunction) {
     try {
         const params = UpdateUserSchema.parse(req.body)
-        const user = await updateUser({
+        const { updatedUser } = await updateUser({
             repository,
             user: params,
             id: req.sub,
         })
-        res.status(200).send(user)
+        res.status(200).send(updatedUser)
     } catch (err) {
         next(err)
     }
 }
 
-export async function detail(req: Request, res: Response) {
-    const user = await findUser(repository, req.sub)
+export async function detail(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { user } = await findUser({
+            userRepository: repository,
+            id: req.sub,
+        })
 
-    if (user instanceof Error) {
-        return res.status(404).json({ error: user.message })
+        return res.status(200).send(user)
+    } catch (err) {
+        next(err)
     }
-
-    return res.status(200).json(user)
 }

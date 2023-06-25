@@ -4,12 +4,12 @@ import { User } from "../../types/userTypes"
 import { sign } from "jsonwebtoken"
 import bcrypt from "bcrypt"
 
-interface authRequest {
+interface userAuthenticationRequest {
     userRepository: UserRepository
     user: Login
 }
 
-interface authResponse {
+interface userAuthenticationResponse {
     user: User
     token: string
 }
@@ -17,7 +17,7 @@ interface authResponse {
 export async function userAuthentication({
     userRepository,
     user,
-}: authRequest): Promise<authResponse> {
+}: userAuthenticationRequest): Promise<userAuthenticationResponse> {
     const userExists = await userRepository.findByEmail(user.email)
 
     if (userExists) {

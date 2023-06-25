@@ -2,17 +2,21 @@ import { UserRepository } from "../../repositories/userRepository"
 import { UpdateUser } from "../../types/userTypes"
 import bcrypt from "bcrypt"
 
-interface updateUserResponse {
+interface updateUserRequest {
     repository: UserRepository
     user: UpdateUser
     id: string
+}
+
+interface updateUserResponse {
+    updatedUser: UpdateUser
 }
 
 export async function updateUser({
     repository,
     user,
     id,
-}: updateUserResponse): Promise<UpdateUser> {
+}: updateUserRequest): Promise<updateUserResponse> {
     const userExists = await repository.findById(id)
 
     if (user.password) {
@@ -23,5 +27,5 @@ export async function updateUser({
     }
 
     await repository.update(id, user)
-    return await repository.findById(id)
+    return { updatedUser: userExists }
 }

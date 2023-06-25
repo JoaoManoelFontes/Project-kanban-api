@@ -8,7 +8,7 @@ test("Should update user", async () => {
 
     const user = await repository.create(createUserFactory())
 
-    const updatedUser = await updateUser({
+    const { updatedUser } = await updateUser({
         repository,
         id: user.id,
         user: {

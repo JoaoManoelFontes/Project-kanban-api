@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express"
 import { createTask } from "../../app/use-cases/task/createTask"
 import { findTaskByUser } from "../../app/use-cases/task/findTaskByUser"
-import { PrismaTaskRepository } from "../../database/prisma/prismaTaskRepository"
 import { TaskSchema, UpdateTaskSchema } from "../../app/types/taskTypes"
 import { updateTask } from "../../app/use-cases/task/updateTask"
+import { findTask } from "../../app/use-cases/task/findTask"
 
+import { PrismaTaskRepository } from "../../database/prisma/prismaTaskRepository"
 const repository = new PrismaTaskRepository()
 
 export async function create(req: Request, res: Response, next: NextFunction) {
@@ -17,24 +18,20 @@ export async function create(req: Request, res: Response, next: NextFunction) {
             task: params,
         })
 
-        return res.status(201).json(task)
+        return res.status(201).send(task)
     } catch (err) {
         next(err)
     }
 }
 
-export async function findAllByUserId(
-    req: Request,
-    res: Response,
-    next: NextFunction
-) {
+export async function list(req: Request, res: Response, next: NextFunction) {
     try {
-        const tasks = await findTaskByUser({
+        const { tasks } = await findTaskByUser({
             taskRepository: repository,
             userId: req.sub,
         })
 
-        return res.status(200).json(tasks)
+        return res.status(200).send(tasks)
     } catch (err) {
         next(err)
     }
@@ -46,12 +43,24 @@ export async function update(req: Request, res: Response, next: NextFunction) {
     try {
         const params = UpdateTaskSchema.parse(req.body)
         const id = req.params.id
-        const task = await updateTask({
+        const { updatedTask } = await updateTask({
             taskRepository: repository,
             task: params,
             id,
         })
-        return res.status(200).json({ task })
+        return res.status(200).send(updatedTask)
+    } catch (err) {
+        next(err)
+    }
+}
+
+export async function detail(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { task } = await findTask({
+            taskRepository: repository,
+            id: req.params.id,
+        })
+        return res.status(200).send(task)
     } catch (err) {
         next(err)
     }

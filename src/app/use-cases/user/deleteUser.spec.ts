@@ -8,7 +8,10 @@ test("deleteUser", async () => {
 
     const { id, email } = await repository.create(createUserFactory())
 
-    await deleteUser(repository, id)
+    await deleteUser({
+        userRepository: repository,
+        id,
+    })
 
     const user = await repository.findByEmail(email)
     expect(user).toBeNull()
@@ -16,12 +19,16 @@ test("deleteUser", async () => {
     expect(repository.users.length).toEqual(0)
 })
 
-test("deleteUser with invalid id", async () => {
+test("deleteUser with inexistent id", async () => {
     const repository = new InMemoryUserRepository()
 
     const { id } = await repository.create(createUserFactory())
 
     expect(
-        async () => await deleteUser(repository, id + "invalid")
+        async () =>
+            await deleteUser({
+                userRepository: repository,
+                id: "inexistent id",
+            })
     ).rejects.toThrowError("User not found")
 })

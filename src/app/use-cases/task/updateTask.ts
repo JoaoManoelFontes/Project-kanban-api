@@ -8,13 +8,19 @@ interface updateTaskRequest {
 }
 
 interface updateTaskResponse {
-    task: Task
+    updatedTask: Task
 }
 
 export async function updateTask({
     taskRepository,
     task,
     id,
-}: updateTaskRequest) {
-    return await taskRepository.update(id, task)
+}: updateTaskRequest): Promise<updateTaskResponse> {
+    const { markAsDone, markAsMaking } = await taskRepository.findById(id)
+
+    if (markAsDone && task.markAsMaking) task.markAsDone = false
+    if (markAsMaking && task.markAsDone) task.markAsMaking = false
+
+    const updatedTask = await taskRepository.update(id, task)
+    return { updatedTask }
 }

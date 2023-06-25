@@ -1,8 +1,13 @@
 import { UserRepository } from "../../repositories/userRepository"
 
-export async function deleteUser(
-    userRepository: UserRepository,
+interface deleteUserRequest {
+    userRepository: UserRepository
     id: string
-): Promise<void> {
+}
+
+export async function deleteUser({
+    userRepository,
+    id,
+}: deleteUserRequest): Promise<void> {
     await userRepository.delete(id)
 }

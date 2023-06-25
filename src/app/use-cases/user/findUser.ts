@@ -1,10 +1,19 @@
 import { UserRepository } from "../../repositories/userRepository"
 import { User } from "../../types/userTypes"
 
-export async function findUser(
-    repository: UserRepository,
+interface findUserRequest {
+    userRepository: UserRepository
     id: string
-): Promise<User | Error> {
+}
+
+interface findUserResponse {
+    user: User
+}
+
+export async function findUser({
+    userRepository: repository,
+    id,
+}: findUserRequest): Promise<findUserResponse> {
     const user = await repository.findById(id)
-    return user
+    return { user }
 }

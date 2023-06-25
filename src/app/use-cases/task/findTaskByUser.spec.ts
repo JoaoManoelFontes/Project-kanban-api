@@ -22,7 +22,7 @@ test("Should find tasks by user", async () => {
     expect(tasks).toEqual([task, task2])
 })
 
-test("Should throw an error if user id is invalid", async () => {
+test("Should not find tasks with inexistent userId", async () => {
     const repository = new InMemoryTaskRepository()
 
     await repository.create(createTaskFactory())
@@ -31,7 +31,7 @@ test("Should throw an error if user id is invalid", async () => {
         async () =>
             await findTaskByUser({
                 taskRepository: repository,
-                userId: "invalid",
+                userId: "inexistent id",
             })
     ).rejects.toThrowError("Inexistent user id or tasks not found")
 })

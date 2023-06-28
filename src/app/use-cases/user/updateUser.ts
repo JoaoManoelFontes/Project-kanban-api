@@ -26,6 +26,6 @@ export async function updateUser({
         user.password = bcrypt.hashSync(user.password, 10)
     }
 
-    await repository.update(id, user)
-    return { updatedUser: userExists }
+    const updatedUser = await repository.update(id, user)
+    return { updatedUser }
 }

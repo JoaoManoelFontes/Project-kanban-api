@@ -13,5 +13,9 @@ export function createUserFactory(overrides?: Override): User {
         ...overrides,
     }
 
+    if (overrides?.password) {
+        user.password = bcrypt.hashSync(overrides.password, 10)
+    }
+
     return user
 }

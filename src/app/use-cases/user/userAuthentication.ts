@@ -27,9 +27,13 @@ export async function userAuthentication({
         )
 
         if (passwordMatch) {
-            const token = sign({ id: userExists.id }, "secret", {
-                expiresIn: "1d",
-            })
+            const token = sign(
+                { id: userExists.id },
+                process.env.JWT_SECRET_KEY as string,
+                {
+                    expiresIn: "1d",
+                }
+            )
 
             return { user: userExists, token }
         } else {

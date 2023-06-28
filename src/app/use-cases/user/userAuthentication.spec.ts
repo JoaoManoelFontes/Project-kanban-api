@@ -21,11 +21,6 @@ test("userAuthentication", async () => {
 
 test("userAuthentication with invalid email", async () => {
     const repository = new InMemoryUserRepository()
-
-    const user = await repository.create(createUserFactory())
-
-    const { password } = user
-
     expect(
         async () =>
             await userAuthentication({
@@ -45,14 +40,13 @@ test("userAuthentication with invalid password", async () => {
 
     const { email } = user
 
-    expect(
-        async () =>
-            await userAuthentication({
-                userRepository: repository,
-                user: {
-                    email,
-                    password: "invalid password",
-                },
-            })
+    await expect(
+        userAuthentication({
+            userRepository: repository,
+            user: {
+                email,
+                password: "invalid password",
+            },
+        })
     ).rejects.toThrowError("Password doesn't match")
 })

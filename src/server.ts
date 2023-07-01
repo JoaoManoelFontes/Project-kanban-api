@@ -4,7 +4,7 @@ import { taskRouter } from "./http/routers/taskRouter"
 import { authMiddleware } from "./http/middlewares/auth"
 import { ZodError } from "zod"
 
-const app = express()
+export const app = express()
 app.use(express.json())
 
 app.use("/task", authMiddleware, taskRouter)

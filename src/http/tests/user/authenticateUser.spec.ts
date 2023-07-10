@@ -1,25 +1,11 @@
 import { app } from "../../../server"
-import { describe, expect, it, beforeAll, afterAll } from "vitest"
-import { PrismaClient } from "@prisma/client"
+import { describe, expect, it } from "vitest"
 import request from "supertest"
-import { createUserFactory } from "../../../app/factories/createUserFactory"
-
-const prisma = new PrismaClient()
-
-beforeAll(async () => {})
-
-afterAll(async () => {
-    await prisma.$disconnect()
-})
+import { createUser } from "../utils/createUser"
 
 describe("authenticate User (e2e)", () => {
     it("should be able to authenticate a user", async () => {
-        const user = await prisma.user.create({
-            data: createUserFactory({
-                email: "new@mail.com",
-                password: "password",
-            }),
-        })
+        const user = await createUser()
 
         const response = await request(app).post("/user/auth").send({
             email: user.email,
@@ -29,5 +15,15 @@ describe("authenticate User (e2e)", () => {
         expect(response.status).toBe(200)
         expect(response.body).toHaveProperty("token")
         expect(response.body.user).toMatchObject(user)
+    })
+
+    it("should not be able to authenticate a user with an invalid body", async () => {
+        const response = await request(app).post("/user/auth").send({
+            email: "invalid",
+            password: "invalid",
+        })
+
+        expect(response.status).toBe(400)
+        expect(response.body.message).toEqual("Validation error.")
     })
 })

@@ -1,15 +1,6 @@
 import { app } from "../../../server"
-import { describe, expect, it, beforeAll, afterAll } from "vitest"
-import { PrismaClient } from "@prisma/client"
+import { describe, expect, it } from "vitest"
 import request from "supertest"
-
-const prisma = new PrismaClient()
-
-beforeAll(async () => {})
-
-afterAll(async () => {
-    await prisma.$disconnect()
-})
 
 describe("create User (e2e)", () => {
     it("should be able to create a user", async () => {

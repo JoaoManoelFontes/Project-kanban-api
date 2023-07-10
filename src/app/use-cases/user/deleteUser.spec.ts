@@ -22,13 +22,12 @@ test("deleteUser", async () => {
 test("deleteUser with inexistent id", async () => {
     const repository = new InMemoryUserRepository()
 
-    const { id } = await repository.create(createUserFactory())
+    await repository.create(createUserFactory())
 
-    expect(
-        async () =>
-            await deleteUser({
-                userRepository: repository,
-                id: "inexistent id",
-            })
+    await expect(
+        deleteUser({
+            userRepository: repository,
+            id: "inexistent id",
+        })
     ).rejects.toThrowError("User not found")
 })
